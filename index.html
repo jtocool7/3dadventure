@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>3d adventure game!</title>
+  <style>
+  /*body {
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+}*/
+  </style>
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/89/three.min.js"></script>
+<script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/123879/OrbitControls.js"></script>
+<script>
+/**
+ * @file
+ * The main scene.
+ */
+
+/**
+ * Set our global variables.
+ */
+var camera, // We need a camera.
+    scene, // The camera has to see something.
+    renderer, // Render our graphics.
+    controls, // Our Orbit Controller for camera magic.
+    container, // Our HTML container for the program.
+    rotationPoint;  // The point in which our camera will rotate around.
+
+var characterSize = 50;
+var outlineSize = characterSize * 0.05;
+
+THREE.ImageUtils.crossOrigin = '';
+
+var texture = THREE.ImageUtils.loadTexture('https://i.imgur.com/1QLz1pv.png');
+
+var tex2 = THREE.ImageUtils.loadTexture('https://i.imgur.com/lylgeR5.png');
+
+var tex3 = THREE.ImageUtils.loadTexture('https://i.imgur.com/KkmNsC8.jpg');
+
+var tex4 = THREE.ImageUtils.loadTexture('https://i.imgur.com/1R49EXK.jpg');
+
+var tex5 = THREE.ImageUtils.loadTexture('https://i.imgur.com/Gr79dbQ.jpg');
+
+var tex6 = THREE.ImageUtils.loadTexture('https://i.imgur.com/yLVkKD7.jpg');
+
+var tex6 = THREE.ImageUtils.loadTexture('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjHCUbJT9JM9kU4IykZcHKSnsz5OdLXIRU2Q&usqp=CAU');
+
+/**
+ * Run initial setup function and loop through rendering.
+ */
+init();
+animate(); 
+
+/**
+ * Initializer function.
+ */
+function init() {
+
+  // Build the container
+  container = document.createElement( 'div' );
+  document.body.appendChild( container );
+  container.setAttribute("id", "hi");
+  
+  // Create the scene.
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color( 0xccddff );
+  
+  // Ambient lights.
+  var ambient = new THREE.AmbientLight( 0xffffff );
+  scene.add( ambient );
+  // Add hemisphere lighting.
+var hemisphereLight = new THREE.HemisphereLight( 0xdddddd, 0x000000, 0.5 );
+scene.add( hemisphereLight );
+  
+  // Create a rotation point.
+  rotationPoint = new THREE.Object3D();
+  rotationPoint.position.set( 0, 0, 0 );
+  scene.add( rotationPoint );
+  
+  createCharacter();
+  createFloor();
+  createTree(300, 300);
+  createTree(800, -300);
+  createTree(-300, 800);
+  createTree(-800, -800);
+  createTree(500, -800);
+  createTree(900, -500);
+  createTree(100, -500);
+  createTree(50, -500);
+  createTree(100, -500);
+  createTree(1000, 500);
+  createTree(1000, 1000);
+  createTree(90, 1000);
+  createTree(200, -600);
+  createTree(200, -600);
+  createTree(100, -1000000);
+  createTree(-900, -600);
+  //createFire();
+ // createBox(-900, -600);
+  
+  scene.fog = new THREE.Fog( 0xccddff, 500, 2000 );
+  // Create the camera.
+  camera = new THREE.PerspectiveCamera(
+    50, // Angle
+    window.innerWidth / window.innerHeight, // Aspect Ratio.
+    1, // Near view.
+    20000 // Far view.
+  );
+  camera.position.z = -300;
+  camera.position.y = 100;
+  box.add( camera );
+  
+  // Build the renderer
+  renderer = new THREE.WebGLRenderer( { antialias: true } );
+  
+  var element = renderer.domElement;
+  renderer.setSize( window.innerWidth, window.innerHeight );
+  container.appendChild( element );
+  
+  // Build the controls.
+  controls = new THREE.OrbitControls( camera, element );
+  controls.enablePan = true;
+  controls.enableZoom = true; 
+  controls.maxDistance = 1000; // Set our max zoom out distance (mouse scroll)
+  controls.minDistance = 60; // Set our min zoom in distance (mouse scroll)
+  controls.target.copy( new THREE.Vector3( 0, 0, 0 ) );
+  
+ controls.enableKeys = false;
+ createf();
+ 
+  
+}
+
+
+
+
+
+window.onresize = function () {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize( window.innerWidth, window.innerHeight );
+};
+
+/**
+ * Updates to apply to the scene while running.
+ */
+function update() {
+  camera.updateProjectionMatrix();
+}
+
+/**
+ * Render the scene.
+ */
+function render() {
+  renderer.render( scene, camera );
+  
+  if ( camera.position.y < 10 ) {
+    camera.position.y = 10;
+  }
+  
+  
+  //box.position.z += 1;
+  
+  
+  document.addEventListener('keydown', function(evt){
+  if(evt.keyCode == 38){
+  //alert('hi');
+  box.position.z += 0.005;
+  
+  }
+  if(evt.keyCode == 40){
+  box.position.z -= 0.005;
+  
+  }
+  if(evt.keyCode == 39){
+  box.rotation.y -= 0.0000005;
+  //camera.rotation.x -= 0.0005;
+  box.position.x -= 0.005;
+  }
+  if(evt.keyCode == 37){
+  //box.rotation.y += 0.0005;
+  box.rotation.y += 0.0000005;
+  //camera.rotation.y += 0.0005;
+  box.position.x += 0.005;
+}
+  })
+  console.log(box.position.z);
+  
+  document.addEventListener('keydown', function(evt){
+  if(evt.keyCode == 70){
+  //alert('hi');
+  createFire();
+  
+  }
+  })
+  
+}
+
+/**
+ * Animate the scene.
+ */
+function animate() {
+  requestAnimationFrame(animate);
+  update();
+  render();
+  
+}
+
+/**
+ * Create the main character.
+ */
+function createCharacter() {
+  var geometry = new THREE.BoxBufferGeometry( characterSize, characterSize, characterSize );
+  var material = new THREE.MeshFaceMaterial([
+    new THREE.MeshBasicMaterial({
+    //tex2
+      map: tex2, wireframe: false
+    }),
+    new THREE.MeshBasicMaterial({
+       map: tex2, wireframe: false 
+    }),
+    new THREE.MeshBasicMaterial({
+        //color: 0x0000ff, top
+        //tex4
+         map: tex2, wireframe: false
+    }),
+    new THREE.MeshBasicMaterial({
+    // bottom
+       color: 0xA0522D, wireframe: false
+    }),
+    new THREE.MeshBasicMaterial({
+    //tex1
+      map: texture, wireframe: false
+    }),
+    new THREE.MeshBasicMaterial({
+      map: tex2, wireframe: false
+    })
+]);
+
+  box = new THREE.Mesh( geometry, material );
+  box.position.y = characterSize/2;
+  rotationPoint.add( box );
+  
+  // Create outline object
+ 
+}
+
+function createFloor() {
+  var geometry = new THREE.PlaneBufferGeometry( 100000, 100000 );
+  var material = new THREE.MeshToonMaterial( {color: 0x336633} );
+  var plane = new THREE.Mesh( geometry, material );
+  plane.rotation.x = -1 * Math.PI/2;
+  plane.position.y = 0;
+  scene.add( plane );
+}
+
+
+function createTree( posX, posZ ) {
+  // Set some random values so our trees look different.
+  var randomScale = ( Math.random() * 3 ) + 0.8;
+  var randomRotateY = Math.PI/( Math.floor(( Math.random() * 32) + 1 ));
+ 
+  // Create the trunk.
+  var geometry = new THREE.CylinderGeometry( characterSize/3.5, characterSize/2.5, characterSize * 1.3, 8 );
+  var material = new THREE.MeshToonMaterial( {color: 0x664422} );
+  var trunk = new THREE.Mesh( geometry, material );
+ 
+  // Position the trunk based off of it's random given size.
+  trunk.position.set(posX, ((characterSize * 1.3 * randomScale)/2) , posZ);
+  trunk.scale.x = trunk.scale.y = trunk.scale.z = randomScale;
+  scene.add( trunk );
+ 
+  // Create the trunk outline.
+  var outline_geo = new THREE.CylinderGeometry( characterSize/3.5 + outlineSize, characterSize/2.5 + outlineSize, characterSize * 1.3 + outlineSize, 8 );
+  var outline_mat = new THREE.MeshBasicMaterial({
+    color : 0x0000000,
+    side: THREE.BackSide
+  });
+  var outlineTrunk = new THREE.Mesh( outline_geo, outline_mat );
+  trunk.add( outlineTrunk );
+ 
+  // Create the tree top.
+  var geometry = new THREE.DodecahedronGeometry( characterSize );
+  var material = new THREE.MeshToonMaterial({ color: 0x44aa44 });
+  var treeTop = new THREE.Mesh( geometry, material );
+ 
+  // Position the tree top based off of it's random given size.
+  treeTop.position.set( posX, ((characterSize * 1.3 * randomScale)/2) + characterSize * randomScale, posZ );
+  treeTop.scale.x = treeTop.scale.y = treeTop.scale.z = randomScale;
+  treeTop.rotation.y = randomRotateY;
+  scene.add( treeTop );
+ 
+  // Create outline.
+  var outline_geo = new THREE.DodecahedronGeometry(characterSize + outlineSize);
+  var outline_mat = new THREE.MeshBasicMaterial({
+    color : 0x0000000, 
+    side: THREE.BackSide
+  });
+  var outlineTreeTop = new THREE.Mesh(outline_geo, outline_mat);
+  treeTop.add( outlineTreeTop );
+}
+
+//var mouse, raycaster;
+
+
+function createBox(xPos, zPos){
+var geometry2 = new THREE.BoxBufferGeometry( characterSize, characterSize, characterSize );
+
+var material2 = new THREE.MeshFaceMaterial([
+    new THREE.MeshBasicMaterial({
+    //tex2
+      map: tex6, wireframe: false
+    }),
+    new THREE.MeshBasicMaterial({
+       map: tex6, wireframe: false 
+    }),
+    new THREE.MeshBasicMaterial({
+        //color: 0x0000ff, top
+        //tex4
+         map: tex6, wireframe: false
+    }),
+    new THREE.MeshBasicMaterial({
+    // bottom
+       map: tex6, wireframe: false
+    }),
+    new THREE.MeshBasicMaterial({
+    //tex1
+      map: tex6, wireframe: false
+    }),
+    new THREE.MeshBasicMaterial({
+      map: tex6, wireframe: false
+    })
+]);
+
+ 
+
+box2 = new THREE.Mesh( geometry2, material2);
+box2.position.set(xPos, characterSize/2  ,zPos);
+  box2.position.y = characterSize/2;
+  rotationPoint.add( box2 );
+}
+
+document.addEventListener('click', function(e){
+    var x = e.clientX * 2;
+    var  y = e.clientY * 2;
+ 
+    // Use the raycaster to detect intersections.
+    //raycaster.setFromCamera( mouse, camera );
+createBox(x, y)
+})
+
+function createf(){
+const geometry = new THREE.SphereGeometry( 20, 32, 32 );
+const material = new THREE.MeshBasicMaterial( {color: 0xFF0000} );
+const sphere = new THREE.Mesh( geometry, material );
+sphere.position.y = characterSize/2;
+for(var i = 1; i <= 50; i++){
+sphere.position.z += i;
+}
+
+scene.add( sphere );
+}
+
+
+
+
+</script>
+</body>
+</html>
