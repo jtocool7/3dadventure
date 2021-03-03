@@ -130,7 +130,7 @@ scene.add( hemisphereLight );
   controls.target.copy( new THREE.Vector3( 0, 0, 0 ) );
   
  controls.enableKeys = false;
- createf();
+ 
  
   
 }
@@ -188,12 +188,12 @@ function render() {
   box.position.x += 0.005;
 }
   })
-  console.log(box.position.z);
+ // console.log(box.position.z);
   
   document.addEventListener('keydown', function(evt){
   if(evt.keyCode == 70){
   //alert('hi');
-  createFire();
+  createf();
   
   }
   })
@@ -206,6 +206,7 @@ function render() {
 function animate() {
   requestAnimationFrame(animate);
   update();
+  //console.log(box.position.z);
   render();
   
 }
@@ -337,6 +338,7 @@ var material2 = new THREE.MeshFaceMaterial([
 ]);
 
  
+ 
 
 box2 = new THREE.Mesh( geometry2, material2);
 box2.position.set(xPos, characterSize/2  ,zPos);
@@ -353,16 +355,24 @@ document.addEventListener('click', function(e){
 createBox(x, y)
 })
 
+var bux = box.position.z + 2;
+
+function updatebux(){
+requestAnimationFrame(updatebux);
+bux = box.position.z + 2;
+console.log(bux);
+}
+
+updatebux();
+
 function createf(){
 const geometry = new THREE.SphereGeometry( 20, 32, 32 );
 const material = new THREE.MeshBasicMaterial( {color: 0xFF0000} );
 const sphere = new THREE.Mesh( geometry, material );
 sphere.position.y = characterSize/2;
-for(var i = 1; i <= 50; i++){
-sphere.position.z += i;
-}
-
+sphere.position.z = bux;
 scene.add( sphere );
+console.log(sphere.position.z)
 }
 
 
